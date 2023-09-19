@@ -4,7 +4,7 @@ import { IVehicle } from './../../models/vehicle.interface'
 import { VehicleStateService } from '../../services/state/vehicle-state.service'
 import { TraficService } from './../../services/trafic/trafic.service'
 import { Component, OnInit } from '@angular/core'
-import { Observable, combineLatest, map, retry, share, catchError, BehaviorSubject, of } from 'rxjs'
+import { Observable, combineLatest, map, retry, share, catchError, BehaviorSubject, of, zip } from 'rxjs'
 import { animate, query, stagger, style, transition, trigger } from '@angular/animations'
 import { ISelectedOptions } from 'src/app/models/selected-options.interface'
 import { IFilterOptions } from 'src/app/models/filter-options.interface'
@@ -55,8 +55,9 @@ export class ContainerComponent implements OnInit {
     const filteredVehicles$: Observable<IVehicle[]> = this.buildDisplayList(this._state.filterOptions, vehicleList$)
 
     //TODO combine into unique data source
-    return combineLatest([filterOptions$, filteredVehicles$]).pipe(
+    return zip([filterOptions$, filteredVehicles$]).pipe(
       map((data) => {
+        console.log('data', data)
         return { filters: data[0], vehicles: data[1] }
       })
     )
