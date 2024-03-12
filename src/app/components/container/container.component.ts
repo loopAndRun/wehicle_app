@@ -41,20 +41,20 @@ export class ContainerComponent implements OnInit {
   }
 
   private initializeData(): Observable<IFiltersAndVehicles> {
-    //TODO get vehicle list
+    // get vehicle list
     const vehicleList$: Observable<IVehicle[]> = this._traficService.fetchData().pipe(
       share(),
       retry({ count: 3, delay: 1000 }),
       catchError((err) => of([]))
     )
 
-    //TODO prepare filter options
+    // prepare filter options
     const filterOptions$: Observable<IFilterOptions> = this.buildFilters(this._state.filterOptions, vehicleList$)
 
-    //TODO display vehicles based on filters
+    // display vehicles based on filters
     const filteredVehicles$: Observable<IVehicle[]> = this.buildDisplayList(this._state.filterOptions, vehicleList$)
 
-    //TODO combine into unique data source
+    // combine into unique data source
     return zip([filterOptions$, filteredVehicles$]).pipe(
       map((data) => {
         console.log('data', data)
@@ -65,7 +65,7 @@ export class ContainerComponent implements OnInit {
 
   private buildFilters(filters: BehaviorSubject<ISelectedOptions>, vehicleList: Observable<IVehicle[]>) {
     return combineLatest([filters, vehicleList]).pipe(
-      //TODO prepare unique values
+      // prepare unique values
       map((data) => {
         return this.vehicleListFiltered(data[1], data[0]).reduce(
           (previous, current) => {
@@ -81,7 +81,7 @@ export class ContainerComponent implements OnInit {
           }
         )
       }),
-      //TODO transform to simple array for easy management
+      // transform to simple array for easy management
       map((options) => {
         return {
           colors: [ALL, ...Array.from(options.colors)],
